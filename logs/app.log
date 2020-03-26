@@ -1,0 +1,2 @@
+[WARN ] 2020-03-26 01:28:04.115 [http-nio-8080-exec-3] SqlExceptionHelper - SQL Error: 0, SQLState: 22001
+[ERROR] 2020-03-26 01:28:04.117 [http-nio-8080-exec-3] SqlExceptionHelper - ОШИБКА: значение не умещается в тип character varying(100)
