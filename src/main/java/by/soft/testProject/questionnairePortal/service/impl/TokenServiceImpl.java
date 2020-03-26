@@ -21,7 +21,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String clearTokenFromBearer(String bearerToken) {
-        String result=null;
+        String result = null;
 
         if (bearerToken != null && (bearerToken.startsWith("Bearer_") || bearerToken.startsWith("Bearer "))) {
             result = bearerToken.substring(7);

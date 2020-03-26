@@ -2,7 +2,6 @@ package by.soft.testProject.questionnairePortal.service;
 
 public class ServiceException extends Exception {
 
-
     public ServiceException() {
         super();
     }
@@ -10,7 +9,6 @@ public class ServiceException extends Exception {
     public ServiceException(String message) {
         super(message);
     }
-
 
     public ServiceException(String message, Throwable cause) {
         super(message, cause);

@@ -4,7 +4,6 @@ import by.soft.testProject.questionnairePortal.config.security.jwt.JwtTokenProvi
 import by.soft.testProject.questionnairePortal.dto.request.AuthenticationRequestDto;
 import by.soft.testProject.questionnairePortal.dto.request.RegistrationUserRequestDto;
 import by.soft.testProject.questionnairePortal.dto.response.AuthenticationResponseDto;
-import by.soft.testProject.questionnairePortal.entity.Role;
 import by.soft.testProject.questionnairePortal.entity.User;
 import by.soft.testProject.questionnairePortal.service.ServiceException;
 import by.soft.testProject.questionnairePortal.service.TokenService;
@@ -41,65 +40,65 @@ public class AuthenticationController {
     }
 
     @PostMapping("logIn")
-    public ResponseEntity<?> logInUser(@RequestBody String request){
+    public ResponseEntity<?> logInUser(@RequestBody String request) {
         try {
 
-            AuthenticationRequestDto requestDto=AuthenticationRequestDto.fromJson(request);
+            AuthenticationRequestDto requestDto = AuthenticationRequestDto.fromJson(request);
 
-            String email=requestDto.getEmail();
+            String email = requestDto.getEmail();
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
-            User user=userService.getByEmail(email);
+            User user = userService.getByEmail(email);
 
             if (user == null) {
                 throw new UsernameNotFoundException("User with username " + email + " not found");
             }
 
-            String token=jwtTokenProvider.createToken(email, user.getRoles());
+            String token = jwtTokenProvider.createToken(email, user.getRoles());
 
             tokenService.add(token);
 
-            AuthenticationResponseDto responseDto=new AuthenticationResponseDto(user, token);
+            AuthenticationResponseDto responseDto = new AuthenticationResponseDto(user, token);
 
             return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
-        }catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username or password");
         }
     }
 
     @PostMapping("logUp")
-    public ResponseEntity<?> registerUser(@RequestBody String request){
+    public ResponseEntity<?> registerUser(@RequestBody String request) {
 
-        RegistrationUserRequestDto requestDto=RegistrationUserRequestDto.fromJson(request);
+        RegistrationUserRequestDto requestDto = RegistrationUserRequestDto.fromJson(request);
 
         if (requestDto == null) {
             return new ResponseEntity<>(httpHeaders, HttpStatus.BAD_REQUEST);
         }
 
-        User user=requestDto.getUser();
-        String role=requestDto.getRole();
+        User user = requestDto.getUser();
+        String role = requestDto.getRole();
 
         User registeredUser;
         try {
-            registeredUser=userService.register(user, role);
+            registeredUser = userService.register(user, role);
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
 
-        String token=jwtTokenProvider.createToken(registeredUser.getEmail(), registeredUser.getRoles());
+        String token = jwtTokenProvider.createToken(registeredUser.getEmail(), registeredUser.getRoles());
 
         tokenService.add(token);
 
-        AuthenticationResponseDto responseDto=new AuthenticationResponseDto(registeredUser, token);
+        AuthenticationResponseDto responseDto = new AuthenticationResponseDto(registeredUser, token);
 
         return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping("logOut")
-    public ResponseEntity<?> logOutUser(@RequestHeader("Authorization") String bearerToken){
+    public ResponseEntity<?> logOutUser(@RequestHeader("Authorization") String bearerToken) {
 
-        String token=tokenService.clearTokenFromBearer(bearerToken);
+        String token = tokenService.clearTokenFromBearer(bearerToken);
 
         tokenService.delete(token);
 

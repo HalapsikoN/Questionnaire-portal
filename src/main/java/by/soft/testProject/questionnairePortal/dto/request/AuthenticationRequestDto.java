@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class AuthenticationRequestDto {
 
-    private final static Gson gson=new Gson();
+    private final static Gson gson = new Gson();
 
     private String email;
     private String password;

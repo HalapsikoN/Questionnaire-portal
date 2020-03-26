@@ -14,11 +14,11 @@ public class AuthenticationResponseDto {
     private String token;
 
     public AuthenticationResponseDto(User user, String token) {
-        this.id=user.getId();
-        this.email=user.getEmail();
-        this.firstName=user.getFirstName();
-        this.lastName=user.getLastName();
-        this.phone=user.getPhone();
-        this.token=token;
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.phone = user.getPhone();
+        this.token = token;
     }
 }

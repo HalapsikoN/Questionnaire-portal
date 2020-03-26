@@ -19,8 +19,8 @@ public class RegistrationUserRequestDto {
     private String phone;
     private String role;
 
-    public User getUser(){
-        User user=new User();
+    public User getUser() {
+        User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setPassword(password);
