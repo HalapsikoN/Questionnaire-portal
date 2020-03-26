@@ -2,8 +2,11 @@ package by.soft.testProject.questionnairePortal.controller;
 
 import by.soft.testProject.questionnairePortal.config.security.jwt.JwtTokenProvider;
 import by.soft.testProject.questionnairePortal.dto.request.AuthenticationRequestDto;
+import by.soft.testProject.questionnairePortal.dto.request.RegistrationUserRequestDto;
 import by.soft.testProject.questionnairePortal.dto.response.AuthenticationResponseDto;
+import by.soft.testProject.questionnairePortal.entity.Role;
 import by.soft.testProject.questionnairePortal.entity.User;
+import by.soft.testProject.questionnairePortal.service.ServiceException;
 import by.soft.testProject.questionnairePortal.service.TokenService;
 import by.soft.testProject.questionnairePortal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +46,6 @@ public class AuthenticationController {
 
             AuthenticationRequestDto requestDto=AuthenticationRequestDto.fromJson(request);
 
-            System.out.println(requestDto);
-
             String email=requestDto.getEmail();
 
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
@@ -61,11 +62,47 @@ public class AuthenticationController {
 
             AuthenticationResponseDto responseDto=new AuthenticationResponseDto(user, token);
 
-            System.out.println(responseDto);
-
             return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
         }catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username or password");
         }
+    }
+
+    @PostMapping("logUp")
+    public ResponseEntity<?> registerUser(@RequestBody String request){
+
+        RegistrationUserRequestDto requestDto=RegistrationUserRequestDto.fromJson(request);
+
+        if (requestDto == null) {
+            return new ResponseEntity<>(httpHeaders, HttpStatus.BAD_REQUEST);
+        }
+
+        User user=requestDto.getUser();
+        String role=requestDto.getRole();
+
+        User registeredUser;
+        try {
+            registeredUser=userService.register(user, role);
+        } catch (ServiceException e) {
+            throw new ControllerException(e);
+        }
+
+        String token=jwtTokenProvider.createToken(registeredUser.getEmail(), registeredUser.getRoles());
+
+        tokenService.add(token);
+
+        AuthenticationResponseDto responseDto=new AuthenticationResponseDto(registeredUser, token);
+
+        return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("logOut")
+    public ResponseEntity<?> logOutUser(@RequestHeader("Authorization") String bearerToken){
+
+        String token=tokenService.clearTokenFromBearer(bearerToken);
+
+        tokenService.delete(token);
+
+        return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
     }
 }

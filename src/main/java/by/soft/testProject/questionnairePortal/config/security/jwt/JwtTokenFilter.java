@@ -38,14 +38,16 @@ public class JwtTokenFilter extends GenericFilterBean {
             if (token != null && jwtTokenProvider.isValidToken(token) && tokenService.exists(token)) {
 
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                ;
 
                 if (authentication != null) {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+            }else {
+                tokenService.delete(token);
             }
         } catch (JwtAuthenticationException e) {
             logger.warn(e);
+            tokenService.delete(token);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
