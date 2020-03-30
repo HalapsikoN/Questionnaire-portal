@@ -2,11 +2,10 @@ package by.soft.testProject.questionnairePortal.service.impl;
 
 import by.soft.testProject.questionnairePortal.entity.Role;
 import by.soft.testProject.questionnairePortal.entity.User;
+import by.soft.testProject.questionnairePortal.exception.ServiceException;
 import by.soft.testProject.questionnairePortal.repository.RoleRepository;
 import by.soft.testProject.questionnairePortal.repository.UserRepository;
-import by.soft.testProject.questionnairePortal.service.ServiceException;
 import by.soft.testProject.questionnairePortal.service.UserService;
-import by.soft.testProject.questionnairePortal.service.validator.UserDataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -89,25 +88,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void refactorUser(User user, String roleName) throws ServiceException {
-        if (!UserDataValidator.isValidFirstName(user)) {
-            throw new ServiceException("Incorrect firstName");
-        }
-
-        if (!UserDataValidator.isValidLastName(user)) {
-            throw new ServiceException("Incorrect lastName");
-        }
-
-        if (!UserDataValidator.isValidEmail(user)) {
-            throw new ServiceException("Incorrect email");
-        }
-
-        if (!UserDataValidator.isValidPassword(user)) {
-            throw new ServiceException("Incorrect password");
-        }
-
-        if (!UserDataValidator.isValidPhone(user)) {
-            throw new ServiceException("Incorrect phone");
-        }
 
         Role role = roleRepository.findByName(roleName);
 

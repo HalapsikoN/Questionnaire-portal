@@ -1,4 +1,4 @@
-package by.soft.testProject.questionnairePortal.config.security.jwt;
+package by.soft.testProject.questionnairePortal.exception;
 
 import javax.security.sasl.AuthenticationException;
 

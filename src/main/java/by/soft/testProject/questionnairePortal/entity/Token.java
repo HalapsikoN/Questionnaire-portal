@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 public class Token extends BaseEntity {
 
-    @Column(name = "token")
+    @Column(name = "token", nullable = false)
     private String token;
 
 }

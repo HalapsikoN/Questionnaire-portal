@@ -1,22 +1,35 @@
 package by.soft.testProject.questionnairePortal.dto.request;
 
-import by.soft.testProject.questionnairePortal.controller.controllerExceptionExtn.EmptyDataException;
-import by.soft.testProject.questionnairePortal.controller.controllerExceptionExtn.IncorrectDataInputException;
 import by.soft.testProject.questionnairePortal.entity.User;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import by.soft.testProject.questionnairePortal.exception.ErrorMessageConstants;
 import lombok.Data;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class RegistrationUserRequestDto {
 
-    private final static Gson gson = new Gson();
-
+    @NotNull(message = ErrorMessageConstants.INCORRECT_FIRST_NAME)
     private String firstName;
+
+    @NotNull(message = ErrorMessageConstants.INCORRECT_LAST_NAME)
     private String lastName;
+
+    @NotNull(message = ErrorMessageConstants.INCORRECT_PASSWORD)
+    @Pattern(regexp = ErrorMessageConstants.REGEX_PASSWORD, message = ErrorMessageConstants.INCORRECT_PASSWORD)
     private String password;
+
+    @Email(message = ErrorMessageConstants.INCORRECT_EMAIL)
+    @NotNull(message = ErrorMessageConstants.INCORRECT_EMAIL)
     private String email;
+
+    @NotNull(message = ErrorMessageConstants.INCORRECT_PHONE)
+    @Pattern(regexp = ErrorMessageConstants.REGEX_PHONE, message = ErrorMessageConstants.INCORRECT_PHONE)
     private String phone;
+
+    @NotNull(message = ErrorMessageConstants.INCORRECT_ROLE)
     private String role;
 
     public User getUser() {
@@ -32,17 +45,5 @@ public class RegistrationUserRequestDto {
 
     public String getRole() {
         return role.toUpperCase();
-    }
-
-    public static RegistrationUserRequestDto fromJson(String jsonString) {
-        if (jsonString == null || jsonString.isEmpty()) {
-            throw new EmptyDataException();
-        }
-        try {
-            return gson.fromJson(jsonString, RegistrationUserRequestDto.class);
-        } catch (JsonSyntaxException e) {
-            throw new IncorrectDataInputException("Incorrect JSON object");
-        }
-
     }
 }

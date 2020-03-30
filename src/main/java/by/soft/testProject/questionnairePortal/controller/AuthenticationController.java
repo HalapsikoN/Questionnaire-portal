@@ -5,11 +5,11 @@ import by.soft.testProject.questionnairePortal.dto.request.AuthenticationRequest
 import by.soft.testProject.questionnairePortal.dto.request.RegistrationUserRequestDto;
 import by.soft.testProject.questionnairePortal.dto.response.AuthenticationResponseDto;
 import by.soft.testProject.questionnairePortal.entity.User;
-import by.soft.testProject.questionnairePortal.service.ServiceException;
+import by.soft.testProject.questionnairePortal.exception.GeneralControllerException;
+import by.soft.testProject.questionnairePortal.exception.ServiceException;
 import by.soft.testProject.questionnairePortal.service.TokenService;
 import by.soft.testProject.questionnairePortal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +19,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api")
 public class AuthenticationController {
@@ -27,7 +29,6 @@ public class AuthenticationController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final TokenService tokenService;
-    private final HttpHeaders httpHeaders;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService, TokenService tokenService) {
@@ -35,15 +36,11 @@ public class AuthenticationController {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.tokenService = tokenService;
-        this.httpHeaders = new HttpHeaders();
-        httpHeaders.add("Access-Control-Allow-Origin", "*");
     }
 
     @PostMapping("logIn")
-    public ResponseEntity<?> logInUser(@RequestBody String request) {
+    public ResponseEntity<?> logInUser(@RequestBody @Valid AuthenticationRequestDto requestDto) {
         try {
-
-            AuthenticationRequestDto requestDto = AuthenticationRequestDto.fromJson(request);
 
             String email = requestDto.getEmail();
 
@@ -61,19 +58,17 @@ public class AuthenticationController {
 
             AuthenticationResponseDto responseDto = new AuthenticationResponseDto(user, token);
 
-            return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username or password");
         }
     }
 
     @PostMapping("logUp")
-    public ResponseEntity<?> registerUser(@RequestBody String request) {
-
-        RegistrationUserRequestDto requestDto = RegistrationUserRequestDto.fromJson(request);
+    public ResponseEntity<?> registerUser(@RequestBody @Valid RegistrationUserRequestDto requestDto) {
 
         if (requestDto == null) {
-            return new ResponseEntity<>(httpHeaders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         User user = requestDto.getUser();
@@ -83,7 +78,7 @@ public class AuthenticationController {
         try {
             registeredUser = userService.register(user, role);
         } catch (ServiceException e) {
-            throw new ControllerException(e);
+            throw new GeneralControllerException(e);
         }
 
         String token = jwtTokenProvider.createToken(registeredUser.getEmail(), registeredUser.getRoles());
@@ -92,7 +87,7 @@ public class AuthenticationController {
 
         AuthenticationResponseDto responseDto = new AuthenticationResponseDto(registeredUser, token);
 
-        return new ResponseEntity<>(responseDto, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @GetMapping("logOut")
@@ -102,6 +97,6 @@ public class AuthenticationController {
 
         tokenService.delete(token);
 
-        return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

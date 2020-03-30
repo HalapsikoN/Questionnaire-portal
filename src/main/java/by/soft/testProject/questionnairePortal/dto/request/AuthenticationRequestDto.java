@@ -1,28 +1,20 @@
 package by.soft.testProject.questionnairePortal.dto.request;
 
-import by.soft.testProject.questionnairePortal.controller.controllerExceptionExtn.EmptyDataException;
-import by.soft.testProject.questionnairePortal.controller.controllerExceptionExtn.IncorrectDataInputException;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import by.soft.testProject.questionnairePortal.exception.ErrorMessageConstants;
 import lombok.Data;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class AuthenticationRequestDto {
 
-    private final static Gson gson = new Gson();
-
+    @Email(message = ErrorMessageConstants.INCORRECT_EMAIL)
+    @NotNull(message = ErrorMessageConstants.INCORRECT_EMAIL)
     private String email;
+
+    @NotNull(message = ErrorMessageConstants.INCORRECT_PASSWORD)
+    @Pattern(regexp = ErrorMessageConstants.REGEX_PASSWORD, message = ErrorMessageConstants.INCORRECT_PASSWORD)
     private String password;
-
-    public static AuthenticationRequestDto fromJson(String jsonString) {
-        if (jsonString == null || jsonString.isEmpty()) {
-            throw new EmptyDataException();
-        }
-        try {
-            return gson.fromJson(jsonString, AuthenticationRequestDto.class);
-        } catch (JsonSyntaxException e) {
-            throw new IncorrectDataInputException("Incorrect JSON object");
-        }
-
-    }
 }

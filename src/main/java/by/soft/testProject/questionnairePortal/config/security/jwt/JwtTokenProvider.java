@@ -1,6 +1,7 @@
 package by.soft.testProject.questionnairePortal.config.security.jwt;
 
 import by.soft.testProject.questionnairePortal.entity.Role;
+import by.soft.testProject.questionnairePortal.exception.JwtAuthenticationException;
 import by.soft.testProject.questionnairePortal.service.TokenService;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 @Component
 public class JwtTokenProvider {
+
+    private static final String ROLES = "roles";
+    private static final String AUTHORIZATION = "Authorization";
 
     @Value("${jwt.token.secret}")
     private String secretWord;
@@ -30,14 +33,10 @@ public class JwtTokenProvider {
     @Autowired
     private TokenService tokenService;
 
-    protected void init() {
-        secretWord = Base64.getEncoder().encodeToString(secretWord.getBytes());
-    }
-
     public String createToken(String email, List<Role> roleList) {
 
         Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles", roleList);
+        claims.put(ROLES, roleList);
 
         Date nowDate = new Date();
         Date endOfValidityDate = new Date(nowDate.getTime() + validityInMillisecond);
@@ -64,7 +63,7 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
+        String bearerToken = req.getHeader(AUTHORIZATION);
         return tokenService.clearTokenFromBearer(bearerToken);
     }
 

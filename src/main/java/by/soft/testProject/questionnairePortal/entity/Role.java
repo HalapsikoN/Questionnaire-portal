@@ -13,6 +13,6 @@ import javax.persistence.Table;
 @Data
 public class Role extends BaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
 }

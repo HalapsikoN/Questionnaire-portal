@@ -1,4 +1,4 @@
-package by.soft.testProject.questionnairePortal.service;
+package by.soft.testProject.questionnairePortal.exception;
 
 public class ServiceException extends Exception {
 

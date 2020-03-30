@@ -1,5 +1,6 @@
 package by.soft.testProject.questionnairePortal.config.security.jwt;
 
+import by.soft.testProject.questionnairePortal.exception.JwtAuthenticationException;
 import by.soft.testProject.questionnairePortal.service.TokenService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

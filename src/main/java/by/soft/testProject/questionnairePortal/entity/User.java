@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -17,19 +19,19 @@ import java.util.List;
 @AllArgsConstructor
 public class User extends BaseEntity {
 
-    @Column(name = "firstname")
+    @Column(name = "firstname",nullable = false, length = 100)
     private String firstName;
 
-    @Column(name = "lastname")
+    @Column(name = "lastname",nullable = false, length = 100)
     private String lastName;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "phone")
+    @Column(name = "phone",nullable = false, length = 100)
     private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)

@@ -1,6 +1,7 @@
 package by.soft.testProject.questionnairePortal.service;
 
 import by.soft.testProject.questionnairePortal.entity.User;
+import by.soft.testProject.questionnairePortal.exception.ServiceException;
 
 import java.util.List;
 
