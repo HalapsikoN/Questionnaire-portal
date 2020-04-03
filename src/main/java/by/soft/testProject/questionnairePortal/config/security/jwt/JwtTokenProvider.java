@@ -1,8 +1,9 @@
 package by.soft.testProject.questionnairePortal.config.security.jwt;
 
 import by.soft.testProject.questionnairePortal.entity.Role;
+import by.soft.testProject.questionnairePortal.entity.Token;
 import by.soft.testProject.questionnairePortal.exception.JwtAuthenticationException;
-import by.soft.testProject.questionnairePortal.service.TokenService;
+import by.soft.testProject.questionnairePortal.repository.TokenRepository;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ public class JwtTokenProvider {
     private JwtUserDetailsService jwtUserDetailsService;
 
     @Autowired
-    private TokenService tokenService;
+    private TokenRepository tokenRepository;
 
     public String createToken(String email, List<Role> roleList) {
 
@@ -64,7 +65,7 @@ public class JwtTokenProvider {
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader(AUTHORIZATION);
-        return tokenService.clearTokenFromBearer(bearerToken);
+        return clearTokenFromBearer(bearerToken);
     }
 
     public List<Role> getRoles(String token) {
@@ -84,12 +85,29 @@ public class JwtTokenProvider {
 
             if (claims.getBody().getExpiration().before(new Date())) {
                 result = false;
-                tokenService.delete(token);
+                deleteTokenFromBD(token);
             }
 
             return result;
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("JWT token is expired or invalid");
         }
+    }
+
+    private void deleteTokenFromBD(String string) {
+        if (tokenRepository.existsByToken(string)) {
+            Token token = tokenRepository.getByToken(string);
+            tokenRepository.deleteById(token.getId());
+        }
+    }
+
+    private String clearTokenFromBearer(String bearerToken) {
+        String result = null;
+
+        if (bearerToken != null && (bearerToken.startsWith("Bearer_") || bearerToken.startsWith("Bearer "))) {
+            result = bearerToken.substring(7);
+        }
+
+        return result;
     }
 }
