@@ -36,6 +36,18 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public String createNewAfterUpdate(String token, String email) {
+        return jwtTokenProvider.createToken(email, jwtTokenProvider.getRoles(token));
+    }
+
+
+    @Override
+    public String getEmail(String bearerToken) {
+        String token = clearTokenFromBearer(bearerToken);
+        return jwtTokenProvider.getEmail(token);
+    }
+
+    @Override
     public void delete(String string) {
         if (tokenRepository.existsByToken(string)) {
             Token token = tokenRepository.getByToken(string);

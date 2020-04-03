@@ -67,6 +67,14 @@ public class JwtTokenProvider {
         return tokenService.clearTokenFromBearer(bearerToken);
     }
 
+    public List<Role> getRoles(String token) {
+        return (List<Role>) Jwts.parser()
+                .setSigningKey(secretWord)
+                .parseClaimsJws(token)
+                .getBody()
+                .get(ROLES);
+    }
+
     public boolean isValidToken(String token) throws JwtAuthenticationException {
 
         try {

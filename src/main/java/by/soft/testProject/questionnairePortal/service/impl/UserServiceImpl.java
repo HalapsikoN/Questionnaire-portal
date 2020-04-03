@@ -80,6 +80,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User updateInfoById(Long id, User user) throws ServiceException {
+        User updateUser = userRepository.findById(id).orElse(null);
+
+        if (updateUser == null) {
+            throw new ServiceException("No user with (" + id + ") id");
+        }
+
+        if (userRepository.existsByEmailAndIdNot(user.getEmail(), id)) {
+            throw new ServiceException("Email is already in use");
+        }
+        if (userRepository.existsByPhoneAndIdNot(user.getPhone(), id)) {
+            throw new ServiceException("Phone is already in use");
+        }
+
+        updateUser.setEmail(user.getEmail());
+        updateUser.setFirstName(user.getFirstName());
+        updateUser.setLastName(user.getLastName());
+        updateUser.setPhone(user.getPhone());
+
+        return userRepository.save(updateUser);
+    }
+
+    @Override
+    public User updatePasswordById(Long id, String oldPassword, String newPassword) throws ServiceException {
+        User updateUser = userRepository.findById(id).orElse(null);
+
+        if (updateUser == null) {
+            throw new ServiceException("No user with (" + id + ") id");
+        }
+
+        if (!passwordEncoder.matches(oldPassword, updateUser.getPassword())) {
+            throw new ServiceException("Incorrect password");
+        }
+
+        String newEncodedPassword = passwordEncoder.encode(newPassword);
+
+        updateUser.setPassword(newEncodedPassword);
+
+        return userRepository.save(updateUser);
+    }
+
+    @Override
     public void delete(Long id) throws ServiceException {
         if (!userRepository.existsById(id)) {
             throw new ServiceException("No such user");
