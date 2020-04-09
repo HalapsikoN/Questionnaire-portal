@@ -7,8 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -19,10 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 public class User extends BaseEntity {
 
-    @Column(name = "firstname",nullable = false, length = 100)
+    @Column(name = "firstname", nullable = false, length = 100)
     private String firstName;
 
-    @Column(name = "lastname",nullable = false, length = 100)
+    @Column(name = "lastname", nullable = false, length = 100)
     private String lastName;
 
     @Column(name = "password", nullable = false)
@@ -31,15 +29,18 @@ public class User extends BaseEntity {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "phone",nullable = false, length = 100)
+    @Column(name = "phone", nullable = false, length = 100)
     private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore
     @JoinTable(
-        name = "users_roles",
-        joinColumns ={@JoinColumn(name = "user_id", referencedColumnName = "id")},
-        inverseJoinColumns ={@JoinColumn(name = "role_id", referencedColumnName = "id")}
+            name = "users_roles",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Field> fields;
 }

@@ -2,8 +2,11 @@ package by.soft.testProject.questionnairePortal.controller;
 
 import by.soft.testProject.questionnairePortal.dto.request.ChangePasswordRequestDto;
 import by.soft.testProject.questionnairePortal.dto.request.UpdateUserRequestDto;
+import by.soft.testProject.questionnairePortal.dto.response.AnswerResponse;
+import by.soft.testProject.questionnairePortal.dto.response.FieldResponseDto;
 import by.soft.testProject.questionnairePortal.dto.response.UpdateUserResponseDto;
 import by.soft.testProject.questionnairePortal.dto.response.UserResponseDto;
+import by.soft.testProject.questionnairePortal.entity.Field;
 import by.soft.testProject.questionnairePortal.entity.User;
 import by.soft.testProject.questionnairePortal.exception.GeneralControllerException;
 import by.soft.testProject.questionnairePortal.exception.ServiceException;
@@ -134,5 +137,50 @@ public class UserController {
         UserResponseDto userDto = new UserResponseDto(user);
 
         return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @GetMapping("fields")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUserField(@RequestHeader(AUTHORIZATION) String bearerToken) {
+
+        String email = tokenService.getEmail(bearerToken);
+
+        User user = userService.getByEmail(email);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        List<Field> fieldList = user.getFields();
+
+        List<FieldResponseDto> fieldResponseDtos = new ArrayList<>();
+        for (Field field : fieldList) {
+            fieldResponseDtos.add(new FieldResponseDto(field));
+        }
+
+        return new ResponseEntity<>(fieldResponseDtos, HttpStatus.OK);
+
+    }
+
+    @GetMapping("responses")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUserResponses(@RequestHeader(AUTHORIZATION) String bearerToken) {
+
+        String email = tokenService.getEmail(bearerToken);
+
+        User user = userService.getByEmail(email);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        List<Field> fieldList = user.getFields();
+
+        List<AnswerResponse> fieldResponseDto = new ArrayList<>();
+        for (Field field : fieldList) {
+            fieldResponseDto.add(new AnswerResponse(field));
+        }
+
+        return new ResponseEntity<>(fieldResponseDto, HttpStatus.OK);
     }
 }

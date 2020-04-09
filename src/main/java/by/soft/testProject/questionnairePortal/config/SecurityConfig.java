@@ -25,6 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_ENDPOINT = "/api/logIn";
     private static final String REGISTRATION_ENDPOINT = "/api/logUp";
     private static final String LOGOUT_ENDPOINT = "/api/logOut";
+    private static final String GET_USER_FIELDS_ENDPOINT = "/api/fields/user/**";
+    private static final String ADD_RESPONSE = "/api/responses/**";
 
     @Autowired
     public SecurityConfig(JwtTokenProvider jwtTokenProvider, TokenService tokenService) {
@@ -42,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT, REGISTRATION_ENDPOINT, LOGOUT_ENDPOINT)
+                .antMatchers(LOGIN_ENDPOINT, REGISTRATION_ENDPOINT, LOGOUT_ENDPOINT, GET_USER_FIELDS_ENDPOINT, ADD_RESPONSE)
                 .permitAll()
                 .anyRequest()
                 .authenticated()
