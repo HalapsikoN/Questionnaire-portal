@@ -14,6 +14,8 @@ public interface UserService {
     User getById(Long id);
 
     User updateById(Long id, User user, String roleName) throws ServiceException;
+    User updateInfoById(Long id, User user) throws ServiceException;
+    User updatePasswordById(Long id, String oldPassword, String newPassword) throws ServiceException;
 
     void delete(Long id) throws ServiceException;
 }

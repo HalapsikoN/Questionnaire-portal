@@ -95,4 +95,28 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1.0.7" author="hal">
+        <createTable tableName="fields">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="required" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
